@@ -1,0 +1,43 @@
+% Theory Background
+%
+% Taken from Structural and System Reliability, Der Kiureghian (2022)
+% C.O.V. of MC simulation is taken as square root of (1-Pf)/(N*Pf) (Eq.
+% 9.11) in the book
+%
+% Taken from A Brief Survey of Stopping Rules in MCS (Gilman, 1968)
+% Mean Value is 1/N times Sum of xi
+% Variance of the MCS is 1/(N-1) times Sum of ((xi) - U)^2
+% Thus based on C.O.V. is Var/Mean, C.O.V. is 1/(N*(N-1)) times Sum of ((xi) - U)^2
+%
+% A more practical approach is taken at 
+% https://quant.stackexchange.com/questions/21764/stopping-monte-carlo-simulation-once-certain-convergence-level-is-reached
+targetCOV = 0.01;
+currentCOV = Inf;
+result = []
+N = 0;
+
+% while (targetCOV <= currentCOV)
+%     N = N+1;
+%     X = randn([1 2]);
+%     Y = uq_modifiedRastrigin(X);
+%     result = [result; Y];
+%     pf = sum(result<0);
+%     pf = pf/N;
+%     currentCOV = sqrt((1-pf)/(N*pf))
+% end
+% N
+
+avg = 0;
+sn = 0;
+result = []
+while (targetCOV <= currentCOV)
+    X = randn([1 2]);
+    Y = uq_modifiedRastrigin(X);
+    result = [result; Y];
+    if N == 1
+        avg = mean(result)
+    elseif N > 1
+        currentCOV = 
+    end
+    N = N+1;
+end
