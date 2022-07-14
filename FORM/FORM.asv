@@ -1,0 +1,14 @@
+
+convergence = 0;
+
+X = randn([1 2]);
+while convergence = 0
+    U = modelFunc(X);
+    curGrad = GradientComputation(X);
+    normCurGrad = norm(curGrad)
+    alpha = -curGrad/normCurGrad;
+    d = U/
+
+end
+
+function 
