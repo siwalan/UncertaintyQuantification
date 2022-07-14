@@ -32,6 +32,68 @@ for i = 1 : nrv
          xi = parameter(i,4);
          lambda = parameter(i,3);
          z(i) =  ( log(x(i)) - lambda ) / xi ;
+      case 3  % Gamma marginal distribution
+         lambda = parameter(i,3);
+         k = parameter(i,4);
+         z(i)=inv_norm_cdf(gammainc(lambda*x(i),k));
+      case 4  % Shifted exponential marginal distribution
+          lambda = parameter(i,3);
+          x_zero = parameter(i,4);
+          z(i)=inv_norm_cdf(1-exp(-lambda*(x(i)-x_zero)));
+       case 5  % Shifted Rayleigh marginal distribution
+          a = parameter(i,3) ;
+          x_zero = parameter(i,4);
+          z(i)=inv_norm_cdf(1-exp(-0.5*((x(i)-x_zero)/a)^2));
+      case 6  % Uniform marginal distribution
+         a = parameter(i,3);
+         b = parameter(i,4);
+         z(i) = inv_norm_cdf( (x(i) - a) / (b-a) );
+      case 7  % (Reserved for Beta marginal distribution)
+         
+         a = parameter(i,5);
+         b = parameter(i,6);
+         q = parameter(i,3);
+         r = parameter(i,4);
+      
+         % reduce x to the interval [0,1]
+         x01(i) = (x(i)-a)/(b-a);
+         z(i) = inv_norm_cdf(betacdf(x01(i),q,r));
+         
+      case 8 % Chi-square marginal distribution
+         lambda = 0.5;
+         nu = parameter(i,3);
+         k = nu/2;
+         z(i)=inv_norm_cdf(gammainc(lambda*x(i),k));
+         
+      case 11 % Type I Largest Value marginal distribution
+         a_n = parameter(i,4);
+         u_n = parameter(i,3);
+         z(i) = inv_norm_cdf(exp(-exp(-a_n*(x(i)-u_n)))); 
+      case 12 % Type I Smallest Value marginal distribution
+         a_1 = parameter(i,4);
+         u_1 = parameter(i,3);
+         z(i) = inv_norm_cdf(1-exp(-exp(a_1*(x(i)-u_1))));
+      case 13 % Type II Largest Value marginal distribution
+         u_n = parameter(i,3);
+         k = parameter(i,4);
+         z(i) = inv_norm_cdf(exp(-(u_n/x(i))^k));
+      case 14 % Type III Smallest Value marginal distribution
+         u_1 = parameter(i,3);
+         k = parameter(i,4);
+         epsilon = parameter(i,5);
+         z(i) = inv_norm_cdf(1-exp(-((x(i)-epsilon)/(u_1-epsilon))^k)); 
+      
+      case 15 % Gumbel marginal distribution
+         a_n = parameter(i,4);
+         u_n = parameter(i,3);
+         z(i) = inv_norm_cdf(exp(-exp(-a_n*(x(i)-u_n))));
+      case 16 % Weibull marginal distribution
+         u_1 = parameter(i,3);
+         k = parameter(i,4);
+         z(i) = inv_norm_cdf(1-exp(-(x(i)/u_1)^k));
+      case 18 % (Reserved for Laplace marginal distribution)
+      case 19 % (Reserved for Pareto marginal distribution)
+
       otherwise
    end
 end 

@@ -1,14 +1,42 @@
+% First Order Reduced Moment for Finite Element (or Implicit Model)
+%
+% Theory is based on ..
+% Transformation Submodules are from FERUM under GPLv2 License.
 
 convergence = 0;
 
-X = randn([1 2]);
-while convergence = 0
-    U = modelFunc(X);
-    curGrad = GradientComputation(X);
-    normCurGrad = norm(curGrad)
+marg = [1;1];
+parameter = [5.5 1.0 0 0; 5 1 0 0; ];
+R = eye(2);
+
+Ro = mod_corr(R,marg,parameter);
+Lo = (chol(Ro))';
+iLo = inv(Lo);
+X = [5.5 5];
+U = x_to_u(X,marg,parameter,iLo)
+i = 1
+e2 = 10^-3;
+while convergence == 0
+    X = u_to_x(U,marg,parameter,Lo);
+    J_u_x = jacobian(X,U,marg,parameter,Lo,iLo);
+    J_x_u = inv(J_u_x);
+
+    Y = modelFunc(X);
+    if i == 1
+        Y0 = Y
+    end
+
+    if ((norm(U-alpha'*U*alpha)<e2))
+        convergence = 1
+    end
+    curGrad = GradientComputation(X,parameter);
+    curGrad = (curGrad' * J_x_u)';
+    normCurGrad = norm(curGrad);
     alpha = -curGrad/normCurGrad;
-    d = U/
+    beta =  1 - normcdf(alpha' * U)
 
+    d = (Y/normCurGrad + alpha' * U) * alpha - U;
+    U = U + d*0.01;
+    i = i + 1
 end
-
-function 
+beta =  1 - normcdf(alpha' * U)
