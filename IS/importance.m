@@ -21,14 +21,35 @@ while i < maxIter
     wDen = [normpdf(X(3),parameterQ(3,1),parameterQ(3,2)) ];
     wNum = [normpdf(X(3),parameter(3,1),parameter(3,2))];
     w = wNum/wDen;
-    wW = [wW; w];
+    if Y <= 0;
+        wY = [wY;1*w];
+    else
+        wY = [wY;0];
+    end
+    
+    X = [normrnd(parameterQ(1,1), parameterQ(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
+    Y = modelFunc(X');
+    wDen = [normpdf(X(1),parameterQ(1,1),parameterQ(1,2)) ];
+    wNum = [normpdf(X(1),parameter(1,1),parameter(1,2))];
+    w = wNum/wDen;
+    if Y <= 0;
+        wY = [wY;1*w];
+    else
+        wY = [wY;0];
+    end
+
+    X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameterQ(2,1), parameterQ(2,2)), normrnd(parameter(3,1), parameter(3,2))];
+    Y = modelFunc(X');
+    wDen = [normpdf(X(2),parameterQ(2,1),parameterQ(2,2)) ];
+    wNum = [normpdf(X(2),parameter(2,1),parameter(2,2))];
+    w = wNum/wDen;
     if Y <= 0;
         wY = [wY;1*w];
     else
         wY = [wY;0];
     end
 %     wY = [wY Y*w];
-    i = i + 1;
+    i = i + 3;
 
 end
 pf = sum(wY);
