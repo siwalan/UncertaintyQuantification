@@ -1,39 +1,34 @@
 clc; clear;
 
 marg = [1;1;1;];
-parameter = [50 6.25 0 0; 60 3 0 0; 2000 200 0 0;];
+parameter = [50 6.25 0 0;60 3 0 0; 1000 200 0 0;];
 R = eye(size(parameter,1));
 Ro = mod_corr(R,marg,parameter);
 Lo = (chol(Ro))';
 iLo = inv(Lo);
 
-parameterQ = [37.996974487706270 6.25 0 0; 58.194315475911814 3 0 0; 2.211207920467880e+03 200 0 0;];
-UX = x_to_u(parameter(:,1),marg,parameter,iLo)
-UQ = x_to_u(parameterQ(:,1),marg,parameter,iLo)
-
+parameterQ = [25.1058; 57.4945; 1.443399260222214e+03];
+UQ = x_to_u(parameterQ(:,1),marg,parameter,iLo);
 
 
 i = 0;
-maxIter = 1000;
+maxIter = 100;
 wY = [];
 wW = [];
 while i < maxIter
-    %X = [normrnd(parameterQ(1,1), parameterQ(1,2)), normrnd(parameterQ(2,1), parameterQ(2,2)), normrnd(parameterQ(3,1), parameterQ(3,2))];
-    X = mvnrnd(UQ,eye(size(UQ,1)))
-
-    Y = modelFunc(X');
-    
-    wDen = mvnpdf(X,diag(UQ),eye(size(UQ,1)))
-    wNum = mvnpdf(X,zeros(size(UQ,1)),eye(size(UQ,1)))
+    U = mvnrnd(zeros(size(marg,2),size(marg,1)),eye(size(marg,1),size(marg,1)));
+    U = U + UQ';
+    X = u_to_x(U',marg,parameter,Lo);
+    Y = modelFunc(X);
+    wDen = mvnpdf(U,zeros(size(marg,2),size(marg,1)),eye(size(marg,1)));
+    wNum = mvnpdf(U-UQ');
     w = wNum/wDen;
-    w = norm(wNum./wDen);
-    wW = [wW; w];
     if Y <= 0;
         wY = [wY;1*w];
     else
         wY = [wY;0];
     end
-%     wY = [wY Y*w];
+    
     i = i + 1;
 
 end

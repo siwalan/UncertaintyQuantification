@@ -10,6 +10,14 @@ iLo = inv(Lo);
 parameterQ = [0.0583182995692646;0.100000000000000;-0.360338271452145;4768.09929479390;-648.366320391761]
 UQ = x_to_u(parameterQ(:,1),marg,parameter,iLo);
 
+LHS = lhsdesign(50,2);
+margLHS = [6;6];
+R = eye(2);
+parameterLHS = [0.5 (1/(2*sqrt(3))) 0 1; 0.5 (1/(2*sqrt(3))) 0 1;]
+RoLHS = mod_corr(R,margLHS,parameterLHS);
+LoLHS = (chol(RoLHS))';
+iLoLHS = inv(LoLHS);
+ULHS = x_to_u(LHS(:,1),marg,paramaterLHS,iLoLHS)
 
 i = 0;
 maxIter = 50;

@@ -13,17 +13,29 @@ currentCOV = Inf;
 result = []
 N = 0;
 
-while (targetCOV <= currentCOV)
+parameter = [0.07433 0.005 0 0;0.1 0.01 0 0; 13 60 0 0; 4751 48 0 0; -648 11 0 0]
+% while (targetCOV <= currentCOV)
+%     N = N+1;
+%     X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
+%     Y = modelFunc(X');
+%     result = [result; Y];
+%     pf = sum(result<0);
+%     pf = pf/N;
+%     currentCOV = sqrt((1-pf)/(N*pf));
+% end
+
+result = []
+while (N <= 100000)
     N = N+1;
-    X = randn([1 2]);
-    Y = uq_modifiedRastrigin(X);
+    X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2)), normrnd(parameter(4,1), parameter(4,2)), normrnd(parameter(5,1), parameter(5,2))];
+    Y = modelFunc(X');
     result = [result; Y];
     pf = sum(result<0);
     pf = pf/N;
     currentCOV = sqrt((1-pf)/(N*pf));
 end
 N
-
+pf
 % MCS with Stopping Criteria without PF
 %
 % Theory Background
@@ -41,56 +53,56 @@ N
 %
 % Background for Standard Error
 % https://statisticsbyjim.com/hypothesis-testing/standard-error-mean/
-
-result = []
-N = 0;
-
-avg = 0;
-m2 = 0;
-targetSE = 0.01;
-currentSE = Inf;
-
-while (targetSE <= currentSE)
-    X = randn([1 2]);
-    Y = uq_modifiedRastrigin(X);
-    N = N+1;
-    if N == 1
-        avg = Y;
-    elseif N > 1
-        delta = Y - avg;
-        avg = avg + delta/N;
-        delta2 = Y - avg;
-        m2 = m2 + delta*delta2;
-        sn = sqrt(m2/(N-1));
-        currentSE = sn/sqrt(N);
-        % currentSE = sqrt(sn/N)
-    end
-end
-N
-
-
-result = []
-N = 0;
-
-avg = 0;
-m2 = 0;
-targetSE = 0.01;
-currentSE = Inf;
-
-while (targetSE <= currentSE)
-    X = randn([1 2]);
-    Y = uq_modifiedRastrigin(X);
-    N = N+1;
-    if N == 1
-        avg = Y;
-    elseif N > 1
-        delta = Y - avg;
-        avg = avg + delta/N;
-        delta2 = Y - avg;
-        m2 = m2 + delta*delta2;
-        sn = sqrt(m2/(N-1));
-        %currentSE = sn/sqrt(N);
-        currentSE =  (sn/sqrt(N))*1.96;
-    end
-end
-N
+% 
+% result = []
+% N = 0;
+% 
+% avg = 0;
+% m2 = 0;
+% targetSE = 0.01;
+% currentSE = Inf;
+% 
+% while (targetSE <= currentSE)
+%     X = randn([1 2]);
+%     Y = uq_modifiedRastrigin(X);
+%     N = N+1;
+%     if N == 1
+%         avg = Y;
+%     elseif N > 1
+%         delta = Y - avg;
+%         avg = avg + delta/N;
+%         delta2 = Y - avg;
+%         m2 = m2 + delta*delta2;
+%         sn = sqrt(m2/(N-1));
+%         currentSE = sn/sqrt(N);
+%         % currentSE = sqrt(sn/N)
+%     end
+% end
+% N
+% 
+% 
+% result = []
+% N = 0;
+% 
+% avg = 0;
+% m2 = 0;
+% targetSE = 0.01;
+% currentSE = Inf;
+% 
+% while (targetSE <= currentSE)
+%     X = randn([1 2]);
+%     Y = uq_modifiedRastrigin(X);
+%     N = N+1;
+%     if N == 1
+%         avg = Y;
+%     elseif N > 1
+%         delta = Y - avg;
+%         avg = avg + delta/N;
+%         delta2 = Y - avg;
+%         m2 = m2 + delta*delta2;
+%         sn = sqrt(m2/(N-1));
+%         %currentSE = sn/sqrt(N);
+%         currentSE =  (sn/sqrt(N))*1.96;
+%     end
+% end
+% N

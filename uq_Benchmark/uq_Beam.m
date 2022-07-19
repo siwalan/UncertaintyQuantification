@@ -1,6 +1,4 @@
 function Y = Beam(X)
-
-
 %% Check inputs
 %
 narginchk(1,1)
