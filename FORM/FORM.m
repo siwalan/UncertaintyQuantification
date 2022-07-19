@@ -6,7 +6,7 @@ clc; clear;
 convergence = 0;
 
 marg = [1;1;1;];
-parameter = [50 6.25 0 0; 60 3 0 0; 1000 200 0 0;];
+parameter = [50 6.25 0 0;60 3 0 0; 1000 200 0 0;];
 R = eye(size(parameter,1));
 
 Ro = mod_corr(R,marg,parameter);
@@ -15,9 +15,9 @@ iLo = inv(Lo);
 X = [parameter(:,1)]';
 U = x_to_u(X,marg,parameter,iLo)
 i = 1
-e1 = 10^-5;
-e2 = 10^-5;
-maxIter = 1000;
+e1 = 10^-10;
+e2 = 10^-10;
+maxIter = 100;
 while convergence == 0
     X = u_to_x(U,marg,parameter,Lo);
     J_u_x = jacobian(X,U,marg,parameter,Lo,iLo);
@@ -39,8 +39,8 @@ while convergence == 0
     beta =  1 - normcdf(alpha' * U);
 
     d = (Y/normCurGrad + alpha' * U) * alpha - U;
-    U = U + d*1;
+    U = U + d*0.1;
     i = i + 1;
 end
 beta =  1 - normcdf(alpha' * U)
-u_to_x(U,marg,parameter,Lo)
+U_Center = u_to_x(U,marg,parameter,Lo)
