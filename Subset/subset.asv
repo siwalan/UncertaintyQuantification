@@ -1,0 +1,26 @@
+targetCOV = 0.01;
+currentCOV = Inf;
+result = []
+N = 0;
+
+parameter = [50 6.25 0 0;60 3 0 0; 1000 200 0 0;];
+
+while (N < 100)
+    N = N+1
+    X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
+    Y = modelFunc(X');
+    X_History = [X_History;]
+    result = [result; Y];
+end
+
+ordered_result = sort(result);
+bk = linspace(1,N,N);
+po = zeros(N,1);
+
+for i=1:N
+    po(i) = (N-i)/N
+end
+
+%% Start of next seed
+Seed = po(91:end)
+
