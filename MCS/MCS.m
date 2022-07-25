@@ -13,8 +13,19 @@ currentCOV = Inf;
 result = []
 N = 0;
 
-parameter = [0.07433 0.005 0 0;0.1 0.01 0 0; 13 60 0 0; 4751 48 0 0; -648 11 0 0]
-% while (targetCOV <= currentCOV)
+parameter = [50 6.25 0 0;60 3 0 0; 1000 200 0 0;];
+while (targetCOV <= currentCOV)
+    N = N+1
+    X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
+    Y = modelFunc(X');
+    result = [result; Y];
+    pf = sum(result<0);
+    pf = pf/N
+    currentCOV = sqrt((1-pf)/(N*pf));
+end
+
+% result = []
+% while (N <= 100000)
 %     N = N+1;
 %     X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
 %     Y = modelFunc(X');
@@ -23,17 +34,6 @@ parameter = [0.07433 0.005 0 0;0.1 0.01 0 0; 13 60 0 0; 4751 48 0 0; -648 11 0 0
 %     pf = pf/N;
 %     currentCOV = sqrt((1-pf)/(N*pf));
 % end
-
-result = []
-while (N <= 100000)
-    N = N+1;
-    X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2)), normrnd(parameter(4,1), parameter(4,2)), normrnd(parameter(5,1), parameter(5,2))];
-    Y = modelFunc(X');
-    result = [result; Y];
-    pf = sum(result<0);
-    pf = pf/N;
-    currentCOV = sqrt((1-pf)/(N*pf));
-end
 N
 pf
 % MCS with Stopping Criteria without PF
