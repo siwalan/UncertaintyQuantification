@@ -1,130 +1,64 @@
-targetCOV = 0.01;
-currentCOV = Inf;
-result = []
-N = 0;
+clc; clear;
 
-parameter = [50 6.25 0 0;60 3 0 0; 1000 200 0 0;];
-X_History =[];
-while (N < 100)
-    N = N+1
-    X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
-    Y = modelFunc(X');
-    result = [result; Y X];
-end
+parameters = [50 6.25 0 0;60 3 0 0; 1000 200 0 0;];
+p0 = 0.10;
+N = 10000;
+Nc     = N*p0;           
+Ns     = 1/p0;   
 
-ordered_result = sortrows(result,'descend');
-po = zeros(N,1);
+N_params = 3;
+MaxLevel = 10;
+
+NPtarget = N - (N * p0);
+
+result = zeros(N,N_params+1,10);
+sortResult = zeros(N,N_params+1,10);
+pLim = zeros(10,1);
+pLevel = zeros(10,1);
+pLevel(1) = p0;
 for i=1:N
-    po(i) = (N-i)/N
+    X = [normrnd(parameters(1,1), parameters(1,2)), normrnd(parameters(2,1), parameters(2,2)), normrnd(parameters(3,1), parameters(3,2))];
+    Y = modelFunc(X')*-1;
+    result(i,:,1) = [Y X];
 end
-ordered_result = [po ordered_result]
 
-result2 = zeros(10,4,10)
-for i=91:100
-    parameter = [ordered_result(i,3) 6.25 0 0;ordered_result(i,4) 3 0 0; ordered_result(i,5) 200 0 0;];
-    X_History =[];
-    N = 0
-    while (N < 10)
-        N = N+1
-        X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
-        Y = modelFunc(X');
-        result2(N,:,i-90) = [Y X];
+maxLevel = 10;
+for i=1:maxLevel
+    [sortResult(:,:,i), idx]  = sortrows(result(:,:,i),'ascend');
+    seeds = result(idx(end-Nc:end),2:end,i);
+    pLim(i) = result(idx(NPtarget),1,i);
+    if (i > 1)
+        pLevel(i) = pLevel(i-1)*p0;
     end
-end
+    Xs = zeros(N,N_params);
+    for j=1:Nc
+        paramSeed = parameters;
+        paramSeed(:,1) = seeds(j,:);
+        for k=1:Ns
+            X = [normrnd(paramSeed(1,1), paramSeed(1,2)), normrnd(paramSeed(2,1), paramSeed(2,2)), normrnd(paramSeed(3,1), paramSeed(3,2))];
+            for z=1:N_params
+                X_Proposal = paramSeed(z,1)-parameters(z,2) + rand(1)*parameters(z,2)*2;
+                r = normpdf(X_Proposal, parameters(z,1), parameters(z,2)) / normpdf(X(z), parameters(z,1), parameters(z,2));
+                if rand <= r
+                    X(z) = X_Proposal;
+                end
+            end
+            
 
-result3 = reshape(result2,[100 4]);
+            if (modelFunc(X')) >= pLim(i)
+                Xs((j-1)*Ns+k,:) = X;
+            else
+                Xs((j-1)*Ns+k,:) = seeds(j,:);
+            end
 
-ordered_result3 = sortrows(result3,'descend');
-po = zeros(size(result3,1),1);
-for i=1:N
-    po(i) = (N-i)/N * 0.1;
-end
-ordered_result3 = [po ordered_result3]
-
-result4 = zeros(10,4,10)
-for i=91:100
-    parameter = [ordered_result3(i,3) 6.25 0 0;ordered_result3(i,4) 3 0 0; ordered_result3(i,5) 200 0 0;];
-    X_History =[];
-    N = 0
-    while (N < 10)
-        N = N+1
-        X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
-        Y = modelFunc(X');
-        result4(N,:,i-90) = [Y X];
+        end
     end
-end
-
-result4 = reshape(result4,[100 4]);
-ordered_result4 = sortrows(result4,'descend');
-po = zeros(size(result4,1),1);
-N= 100
-for i=1:N
-    po(i) = (N-i)/N * 0.01;
-end
-ordered_result4 = [po ordered_result4]
-
-result5 = zeros(10,4,10)
-for i=91:100
-    parameter = [ordered_result4(i,3) 6.25 0 0;ordered_result4(i,4) 3 0 0; ordered_result4(i,5) 200 0 0;];
-    X_History =[];
-    N = 0
-    while (N < 10)
-        N = N+1
-        X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
-        Y = modelFunc(X');
-        result5(N,:,i-90) = [Y X];
+    
+    for j=1:N
+        X = Xs(j,:);
+        Y = modelFunc(X')*-1;
+        result(j,:,i+1) = [Y X];
     end
+
 end
 
-result5 = reshape(result5,[100 4]);
-ordered_result5 = sortrows(result5,'descend');
-po = zeros(size(result5,1),1);
-N= 100
-for i=1:N
-    po(i) = (N-i)/N * 0.001;
-end
-ordered_result5 = [po ordered_result5]
-
-result6 = zeros(10,4,10)
-for i=91:100
-    parameter = [ordered_result5(i,3) 6.25 0 0;ordered_result5(i,4) 3 0 0; ordered_result5(i,5) 200 0 0;];
-    X_History =[];
-    N = 0
-    while (N < 10)
-        N = N+1
-        X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
-        Y = modelFunc(X');
-        result6(N,:,i-90) = [Y X];
-    end
-end
-
-result6 = reshape(result6,[100 4]);
-ordered_result6 = sortrows(result6,'descend');
-po = zeros(size(result6,1),1);
-N= 100
-for i=1:N
-    po(i) = (N-i)/N * 0.0001;
-end
-ordered_result6 = [po ordered_result6]
-
-result7 = zeros(10,4,10)
-for i=91:100
-    parameter = [ordered_result6(i,3) 6.25 0 0;ordered_result6(i,4) 3 0 0; ordered_result6(i,5) 200 0 0;];
-    X_History =[];
-    N = 0
-    while (N < 10)
-        N = N+1
-        X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
-        Y = modelFunc(X');
-        result7(N,:,i-90) = [Y X];
-    end
-end
-
-result7 = reshape(result7,[100 4]);
-ordered_result7 = sortrows(result7,'descend');
-po = zeros(size(result6,1),1);
-N= 100
-for i=1:N
-    po(i) = (N-i)/N * 0.00001;
-end
-ordered_result7 = [po ordered_result7]

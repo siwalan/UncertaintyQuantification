@@ -13,11 +13,12 @@ currentCOV = Inf;
 result = []
 N = 0;
 
+marg = [1; 1; 1;]
 parameter = [50 6.25 0 0;60 3 0 0; 1000 200 0 0;];
 while (targetCOV <= currentCOV)
     N = N+1
-    X = [normrnd(parameter(1,1), parameter(1,2)), normrnd(parameter(2,1), parameter(2,2)), normrnd(parameter(3,1), parameter(3,2))];
-    Y = modelFunc(X');
+    X = generateRandomNumber(marg,parameter);
+    Y = modelFunc(X);
     result = [result; Y];
     pf = sum(result<0);
     pf = pf/N
