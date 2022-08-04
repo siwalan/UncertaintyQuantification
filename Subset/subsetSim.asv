@@ -48,11 +48,11 @@ for i=1:maxLevel
         for k=1:Ns
             proposal = genSubsetProp(curSeed,marg,RV_parameters,Lo,iLo, proposal_Parameters)
             
-            for U_Iter=1:(size(parameter,1))
-                fprintf("* Value of Var%d : %8.5f; Value of X%x : %10.5f \n", U_Iter, U(U_Iter), U_Iter, X(U_Iter))
+            for U_Iter=1:(size(RV_parameters,1))
+                fprintf("* Value of cS%d : %8.5f; Value of Pr%x : %10.5f \n", U_Iter, curSeed(U_Iter), U_Iter, proposal(U_Iter))
             end
             fprintf("\n")
-
+                
             if (modelFunc(X')) >= pLim(i)
                 Xs((j-1)*Ns+k,:) = X;
             else

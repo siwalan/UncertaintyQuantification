@@ -7,12 +7,10 @@ function proposal = genSubsetProp(seeds,marg,RV_parameters,Lo,iLo,proposal_Param
             currentSeed = seeds(varIter);
             cRV_Parameters = RV_parameters(varIter,:);
             cMarg = marg(varIter);
-            uniform_dist_width = 1;
-            w = uniform_dist_width;
-            mean_val = U(varIter);
-            prop = unifrnd(mean_val-w, mean_val+w);
+            w = 1;
+            prop = w*(rand*2-1);
             tempU = U;
-            tempU(varIter) = prop;
+            tempU(varIter) = tempU(varIter) + prop;
             X_prop = u_to_x(tempU,marg,RV_parameters,Lo);
             X_prop = X_prop(varIter);
             top = getPDF(X_prop,cMarg,cRV_Parameters);
@@ -20,7 +18,7 @@ function proposal = genSubsetProp(seeds,marg,RV_parameters,Lo,iLo,proposal_Param
             r = top/bottom;
             r = min(1,r);
             if rand <= r
-                proposal(varIter) = prop;
+                proposal(varIter) = X_prop;
             else
                 proposal(varIter) = currentSeed;
             end
