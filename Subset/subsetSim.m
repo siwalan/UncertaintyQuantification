@@ -1,7 +1,7 @@
 clc; clear;
 
 proposal_Parameters = [1];
-marg = [2;2;2;];
+marg = [1;1;1;];
 RV_parameters = [50 6.25 0 0;60 3 0 0; 1000 200 0 0;];
 
 R = eye(size(RV_parameters,1));
@@ -11,7 +11,7 @@ iLo = inv(Lo);
 RV_parameters = distribution_parameter(marg,RV_parameters);
 
 p0 = 0.10;
-N = 100;
+N = 1000;
 Nc     = N*p0;           
 Ns     = 1/p0;   
 
@@ -47,23 +47,38 @@ for i=1:maxLevel
         paramSeed(j,:) = seeds(j,:)';
         curSeed = seeds(j,:)';
         for k=1:Ns
-            proposal = genSubsetProp(curSeed,marg,RV_parameters,Lo,iLo, proposal_Parameters);
+            [proposal,status]= genSubsetProp(curSeed,marg,RV_parameters,Lo,iLo, proposal_Parameters);
             
-%             for U_Iter=1:(size(RV_parameters,1))
-%                 fprintf("* Value of cS%d : %8.5f; Value of Pr%x : %10.5f \n", U_Iter, curSeed(U_Iter), U_Iter, proposal(U_Iter))
-%             end
-%             fprintf("\n");
+            fprintf("* Generating Samples %d for Chain %d\n",k,j)
+            for U_Iter=1:(size(RV_parameters,1))
+                fprintf("* Value of cS%d : %8.5f; Value of Pr%x : %10.5f \n", U_Iter, curSeed(U_Iter), U_Iter, proposal(U_Iter))
+            end
+            fprintf("\n");
 
             Y_prop = modelFunc(proposal);
+            fprintf("YProp %10.5f YSeed %10.5f \n",Y_prop,seedsY(j,:))
             if Y_prop <= pLim(i)
                 Xs((j-1)*Ns+k,:) = proposal;
+                status = 1;
             else
                 Xs((j-1)*Ns+k,:) = seeds(j,:);
                 Y_prop = seedsY(j,:);
+                status = 0;
             end
+
+            if status == 1
+                fprintf("\n Proposal Accepted\n")
+            else
+                fprintf("\n Proposal Rejected\n")
+            end
+            fprintf("****************************\n")
+
             result((j-1)*Ns+k,:,i+1) = [Y_prop Xs((j-1)*Ns+k,:)];
 
         end
+       fprintf("****************************\n")
+       fprintf("****************************\n")
+
     end
     
 
