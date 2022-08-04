@@ -1,4 +1,10 @@
 function [Y] = modelFunc(X)
-    Y = uq_Beam(X);
+
+    try
+        Y = uq_Beam(X);
+    catch 
+        Y = nan
+    end
+
 end
 
