@@ -1,0 +1,21 @@
+function proposal = genSubsetProp(seed,marg,RV_parameters,Lo,iLo,proposal_Parameters)
+    proposal_PDF_Type = proposal_Parameters(1);
+    U = x_to_u(seed,marg,RV_parameters,iLo);
+
+    for varIter = 1:size(marg,1)
+        if proposal_PDF_Type == 1
+            uniform_dist_width = 1;
+            w = uniform_dist_width;
+            mean_val = U(varIter);
+            r = unifrnd(mean_val-w, mean_val+w);
+            
+        
+        elseif proposal_PDF_Type == 2
+    
+    
+        end
+    end
+
+
+end
+
