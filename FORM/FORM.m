@@ -23,10 +23,11 @@ U = x_to_u(X,marg,parameter,iLo)
 
 %% Convergence Limit, Iterator
 i = 1;e1 = 10^-10;e2 = 10^-10;
-maxIter = 5000;
+maxIter = 100;
 
 fprintf("Starting FORM\n")
 while convergence == 0
+    fprintf("\n**********************");
     fprintf("\nForm Analysis Iteration: %d Starting\n", i)
 
     X = u_to_x(U,marg,parameter,Lo);
